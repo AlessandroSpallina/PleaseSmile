@@ -1,0 +1,15 @@
+# INTRO
+- https://www.arduino.cc/en/Main/ArduinoBoardYun?from=Products.ArduinoYUN
+
+# BUTTON
+- https://www.arduino.cc/en/tutorial/button
+
+# INTERRUPT
+- https://www.arduino.cc/en/Reference/AttachInterrupt
+
+# SENSORE ULTRASUONI
+- http://www.giuseppecaccavale.it/arduino/sensore-ad-ultrasuoni-hc-sr04-arduino/
+- https://bitbucket.org/teckel12/arduino-new-ping/wiki/Home (libreria NewPing)
+
+#EEPROM
+- https://www.arduino.cc/en/Reference/EEPROMWrite

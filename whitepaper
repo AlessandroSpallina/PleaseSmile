@@ -1,0 +1,32 @@
+Arduino ha un sensore di distanza (comandare porte I/O ok),
+quando questo sensore nota distanze sotto un limite hard coded, ovvero quando
+qualcuno passa davanti al sensore stesso allora logga su sd ora e distanza
+(accesso a file system ok), quindi passa il un float relativo alla distanza
+a stm32 (comunicazione seriale ok) che ha 5 led e in base alla distanza ne
+accende qualcuno, se distanza piccola li accende tutti e inizia a spegnerli
+via via che la distanza aumenta.
+Arduino scrive su eeprom la distanza più piccola che ha riscontrato dal boot,
+quindi aggiorna il valore se registra una nuova distanza più piccola. (eeprom ok)
+via web server espone i log e la distanza minima registrata presa dalla eeprom.
+il punto "invocazioni comandi di sistema" lo soddisfiamo richiedendo l'orario
+a qualche sito attraverso linino (curl).
+
+STM32 quindi comanda le porte di IO con l'accensione dei led e gli interrupt
+perchè quando riceve il comando tramite seriale dall'arduino interrompe
+ciò che sta facendo, quindi aggiorna il valore dei led e ritorna a non fare un
+cazzo.
+
+Comandi http aggiuntivi:
+- ip/arduino/DIST/0 -> arduino si comporta come se ci fosse un ostacolo alla distanza
+  minima.
+- ip/arduino/DIST/5 -> arduino si comporta come se ci fosse un ostacolo alla distanza
+  massimo
+- ip/arduino/LOG/N -> arduino dumpa le ultime N righe del log
+- ip/arduino/DIST/MIN -> ritorna il valore salvato su eeprom
+- ip/arduino/SERIAL/CRAZY -> si comporta come se un oggetto si avvicinasse al
+  sensore in modo incrementale e viceversa, in modo tale da fare un test dei led
+  dell'stm32.
+  Mi spiegho meglio, arduino invia 5, poi 4, via via fino a 1 con intervalli
+  di 1 secondo, così stm32 interpreterà i valori ricevuti e accenderà
+  prima un led, poi due, via via fino a quando non li accende tutti, quindi
+  si ripete al cntrario e riprende l'esecuzione normalmente.
