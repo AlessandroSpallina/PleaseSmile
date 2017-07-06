@@ -81,10 +81,12 @@ void setup() {
   //Serial.println("#BOOT: eeprom ok");
 
   File log_file = FileSystem.open(LOG_PATH, FILE_APPEND);
-  if(!log_file)
+  if(!log_file) {
     Serial.println("C'è qualche problema con la scheda SD :S");
-  else
+  } else {
     Serial.println("BOOTED CORRECTLY BRO :)");
+    log_file.close();
+  }
 
   if(EEPROM.read(0) != 5) {
     Serial.println("NOTICE: EEPROM doen't contains magic number.");

@@ -36,13 +36,13 @@ int uart_open(USART_TypeDef* USARTx, uint32_t baud, uint32_t flags)
 
         GPIO_InitTypeDef GPIO_InitStructure;
         GPIO_StructInit(&GPIO_InitStructure);
-        
+
 	// Initialize GPIO TX
         GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
         GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
         GPIO_Init(GPIOA, &GPIO_InitStructure);
-        
+
 	// Initialize GPIO RX
         GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
@@ -105,14 +105,30 @@ void halve_pause()
 }
 
 
+/*Prima di andare a implementare la funzione del progetto, dobbiamo prima abilitare tutte le periferiche attraverso TRE STEPS fondamentali e cioè:
+
+1)abilitazione dei clock delle periferiche che si intendono utilizzare e i moduli che essi necessitano (ricordate: ogni periferica dell'STM32 ha
+un suo clock locale  e vanno abilitati singolarmente per  ridurre la  dissipazione potenza dinamica cioè dovuta agli switch dei transistor)
+esempio una UART(è un dispositivo hardware di uso generale o dedicato. Converte flussi di bit di dati da un formato parallelo a un formato
+seriale asincrono o viceversa. Praticamente ogni famiglia di microprocessori ha la sua UART/USART dedicata.)
+necessita del modulo UART ma richiede l'accensione del modulo GPIO che controlla l'Input/Output dei pin, del modulo Alternate Function AF che
+gestisce le risorse condivise.
+
+2)configurazione dei pin che useremo. (nel nostro caso stiamo usando pin PA5 e pin PC13)
+
+3)Inizializzazione periferica (le periferiche sono tutti i componenti che vedete nella board: USART,NVIC,GPIO,DMA,SPI,TIMER etc.)*/
 int main(void)
 {
         uint32_t mode  = USART_Mode_Rx | USART_Mode_Tx;
         uint32_t baud = 19200;
-	
+
         RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
 
         GPIO_EXTILineConfig(GPIO_PortSourceGPIOC, GPIO_PinSource13);
+
+        /*questa struttura GPIO_InitStructture che è di tipo GPIO_InitTypeDef deve essere dichiarata,
+      	perchè essa contiene tutti i parametri che dobbiamo andare a configurare successivamente per
+      	fare funzionare le periferiche di I/O interessate*/
         EXTI_InitTypeDef EXTI_InitStructure;
 
         EXTI_InitStructure.EXTI_Line = EXTI_Line13;
@@ -225,7 +241,7 @@ int main(void)
 static __IO uint32_t TimingDelay;
 
 void Delay(uint32_t nTime){
-        TimingDelay = nTime; 
+        TimingDelay = nTime;
 	while(TimingDelay != 0);
 }
 
