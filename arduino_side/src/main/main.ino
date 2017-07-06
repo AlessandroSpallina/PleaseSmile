@@ -71,14 +71,14 @@ void setup() {
   
   pinMode(CHECKLED, OUTPUT);
   pinMode(BUTTON, INPUT);
-  pinMode(1, OUTPUT);
+  //pinMode(1, OUTPUT);
   attachInterrupt(digitalPinToInterrupt(BUTTON), toggle, FALLING);
 
   Serial.println("#BOOT: attached interrupt ok");
   
-  Serial.println("EEPROM Written magic code");
+  //Serial.println("EEPROM Written magic code");
     
-  Serial.println("#BOOT: eeprom ok");
+  //Serial.println("#BOOT: eeprom ok");
 
   File log_file = FileSystem.open(LOG_PATH, FILE_APPEND);
   if(!log_file)
@@ -87,7 +87,7 @@ void setup() {
     Serial.println("BOOTED CORRECTLY BRO :)");
 
   if(EEPROM.read(0) != 5) {
-    Serial.println("NOTICE: EEPROM doen't contains magic number");
+    Serial.println("NOTICE: EEPROM doen't contains magic number.");
     while(1);
   }
 
