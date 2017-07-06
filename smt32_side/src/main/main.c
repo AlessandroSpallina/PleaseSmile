@@ -26,6 +26,24 @@ int uart_getc(USART_TypeDef* USARTx)
         return USARTx->DR & 0xff;
 }
 
+//////////////////////////////////// USART ////////////////////////////////////
+
+/*la USART è una periferica che serve per la comunicazione seriale fra le periferiche INTERNE alla board stm32, ma anche per le comunicazioni
+con periferiche esterne alla board (arduino, monitor seriale, screen LCD e tanti altri dispositivi).
+USART è costituito da due lati:
+lato di trasmissione TX e lato di ricezione RX---> ogni lato è costituito da un buffer/registro detto DATA REGISTER
+che è la locazione in cui si conserveranno i dati da trasmettere/inviare.
+L'STM32 ha 3 USART.
+Come visto per la periferica GPIO e i suoi 3 step di inizializzazione, anche per la USART bisogna applicare lo stesso procedimento che verrà illustrato
+dopo la definizione delle seguenti funzioni (mettere prima o dopo le funzioni non cambia niente)*/
+
+/*FUNZIONI USART/
+
+/*questa funzione scrive sul DATA REGISTER di trasmissione;
+assieme ad ogni DATA REGISTER c'è uno STATUS REGISTER che è un flag che serve ad indicare se il dataregister è pieno o vuoto.
+Il while non fa altro che vedere ciclicamente se il flag_txe (dove X sta per IS, E sta per EMPTY) della USARTx(nostro caso usart2) è vuoto o meno.
+Fintanto che il flag==RESET e cioè pari a 0 allora rimaniamo nel while. Appena il flag diventa 1 (significa che è pieno) si esce dal ciclo e non scriviamo più su USART */
+
 int uart_open(USART_TypeDef* USARTx, uint32_t baud, uint32_t flags)
 {
         // Enable bus A and C, since PA5 and PC13 will be used
@@ -37,17 +55,16 @@ int uart_open(USART_TypeDef* USARTx, uint32_t baud, uint32_t flags)
         GPIO_InitTypeDef GPIO_InitStructure;
         GPIO_StructInit(&GPIO_InitStructure);
 
-	// Initialize GPIO TX
+	      // Initialize GPIO TX
         GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
         GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
         GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	// Initialize GPIO RX
+	      // Initialize GPIO RX
         GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
         GPIO_Init(GPIOA, &GPIO_InitStructure);
-
 
         // PA5 (LED)
         GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
@@ -55,13 +72,13 @@ int uart_open(USART_TypeDef* USARTx, uint32_t baud, uint32_t flags)
         GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
         GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-        // PA6 (LED)---7
+        // PA6 (LED)
         GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
         GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
         GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-        // PA7 (LED)---7
+        // PA7 (LED)
         GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
         GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
